@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { margin: 0; background: black; overflow: hidden; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const images = [];
+        const totalImages = 6; // Change this to match AI photo export count
+        let zoom = 1;
+
+        for (let i = 0; i < totalImages; i++) {
+            const img = new Image();
+            img.src = `assets/zoom_${i}.png`; //files in an 'assets' folder
+            images.push(img);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            zoom *= 1.005; 
+
+            if (zoom > 10) zoom = 1; 
+
+            images.forEach((img, index) => {
+                const scale = Math.pow(0.1, index) * zoom;
+                const w = canvas.width * scale;
+                const h = canvas.height * scale;
+                const x = (canvas.width - w) / 2;
+                const y = (canvas.height - h) / 2;
+
+                if (scale > 0.001 && scale < 20) {
+                    ctx.drawImage(img, x, y, w, h);
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        window.dispatchEvent(new Event('resize'));
+        draw();
+    </script>
+</body>
+</html>
